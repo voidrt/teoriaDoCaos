@@ -16,6 +16,7 @@ set(SOURCES
         src/main.cpp
         src/entities/verlet_object.hpp
         src/entities/verlet_object.cpp
+	src/config.hpp
 
 )
 
