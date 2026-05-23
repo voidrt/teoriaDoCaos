@@ -1,24 +1,18 @@
 #include "verlet_object.hpp"
 
-void VerletObject::AddAcceleration(const Vector2 newAcceleration)
+#include "../config.hpp"
+
+void VerletObject::AddAcceleration(const float newAcceleration)
 {
-    this->acceleration += newAcceleration;
+    this->angularAcceleration += newAcceleration;
 }
 
 void VerletObject::Move(const float dt)
 {
-    const Vector2 velocity = this->position - this->previousPosition;
-    this->previousPosition = this->position;
+    const float angularVelocity = this->angle - this->previousAngle;
+    this->previousAngle = this->angle;
 
-    this->position = this->previousPosition + velocity  + this->acceleration * dt * dt;
-    this->acceleration = {};
-}
+    this->angle = this->previousAngle + angularVelocity + (this->angularAcceleration * dt * dt);
 
-void VerletObject::ConstrainObject(const Vector2 reference, const float constraint)
-{
-    const Vector2 distanceToReference = this->position - reference;
-    if (Vector2LengthSqr(distanceToReference) > constraint*constraint)
-    {
-        this->position = reference + Vector2Scale(Vector2Normalize(distanceToReference), constraint);
-    }
+    this->angularAcceleration = 0.0f;
 }

@@ -4,17 +4,16 @@
 class VerletObject
 {
     public:
-        explicit VerletObject(const Vector2 initialPosition) : position(initialPosition), previousPosition(initialPosition)
+        explicit VerletObject(const float initialAngle) : angle(initialAngle), previousAngle(initialAngle)
         {
         };
 
-        [[nodiscard]] Vector2 GetPosition() const { return this->position; }
-        void AddAcceleration(Vector2 newAcceleration);
+        [[nodiscard]] float GetAngle() const { return this->angle; }
+        void AddAcceleration(float newAcceleration);
         void Move(float dt);
-        void ConstrainObject(Vector2 reference, float constraint);
 
     private:
-        Vector2 position;
-        Vector2 previousPosition;
-        Vector2 acceleration{};
+        float angle;
+        float previousAngle;
+        float angularAcceleration = 0;
 };
