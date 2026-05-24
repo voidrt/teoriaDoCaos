@@ -18,7 +18,7 @@ struct Simulation
     float K;
     bool isPaused = true;
 
-    Simulation() : pendulum(0.0f), pulses(0), simulationSpeed(1.0f), startingAngle(0.0f), pendulumLength(256.0f), K(0.9763f)
+    Simulation() : pendulum(0.0f), pulses(0), simulationSpeed(1.0f), startingAngle(0.0f), pendulumLength(256.0f), K(0.971635f)
     {
     }
 
@@ -26,7 +26,7 @@ struct Simulation
     {
         pendulum.Reset(angle);
         isPaused = true;
-        pulses = 0;
+
     }
 };
 
@@ -86,20 +86,26 @@ int main()
 
             if (GuiButton((Rectangle){10, 45, 100, 40}, "Resetar"))
             {
-                simState.Reset(0);
+                simState.Reset(0.0f);
+                simState.pulses = 0;
+                simState.simulationSpeed = 1.0f;
+                simState.startingAngle= 0.0f;
+                simState.pendulumLength= 256.0f;
+                simState.K = 0.971635f;
             }
 
 
             GuiSlider((Rectangle){ kWindowWidth- 250, 15, 200, 20 }, "Angulo inicial (rad)", TextFormat("%.2f", simState.startingAngle), &simState.startingAngle, 0,kTwoPi);
-            GuiSlider((Rectangle){ kWindowWidth- 250, 35, 200, 20 }, "Constante K", TextFormat("%.2f", simState.K), &simState.K, 0, 100);
-            GuiSlider((Rectangle){ kWindowWidth- 250, 55, 200, 20 }, "Comprimento do Pendulo", TextFormat("%.2f", simState.pendulumLength), &simState.pendulumLength, 0, 1000);
-            GuiSlider((Rectangle){ kWindowWidth- 250, 75, 200, 20 }, "Velocidade da Simulacao", TextFormat("%.0f", simState.simulationSpeed), &simState.simulationSpeed, 0, 20);
+            GuiSlider((Rectangle){ kWindowWidth- 250, 35, 200, 20 }, "Constante K", TextFormat("%.2f", simState.K), &simState.K, 0.01, 20);
+            GuiSlider((Rectangle){ kWindowWidth- 250, 55, 200, 20 }, "Comprimento do Pendulo", TextFormat("%.2f", simState.pendulumLength), &simState.pendulumLength, 10, 1000);
+            GuiSlider((Rectangle){ kWindowWidth- 250, 75, 200, 20 }, "Velocidade da Simulacao", TextFormat("%.0f", simState.simulationSpeed), &simState.simulationSpeed, 1, 20);
 
 
             if (simState.startingAngle != hardcodedAngle)
             {
                 hardcodedAngle = simState.startingAngle;
                 simState.Reset(simState.startingAngle);
+                simState.pulses = {};
             }
 
             DrawFPS(10, 5);
