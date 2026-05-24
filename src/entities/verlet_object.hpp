@@ -4,16 +4,17 @@
 class VerletObject
 {
     public:
-        explicit VerletObject(const float initialAngle) : angle(initialAngle), previousAngle(initialAngle)
+        explicit VerletObject(const float initialAngle) : m_angle(initialAngle), m_previousAngle(initialAngle)
         {
         };
 
-        [[nodiscard]] float GetAngle() const { return this->angle; }
+        [[nodiscard]] float GetAngle() const { return this->m_angle; }
         void AddAcceleration(float newAcceleration);
         void Move(float dt);
+        void Reset(float initialAngle);
 
     private:
-        float angle;
-        float previousAngle;
-        float angularAcceleration = 0;
+        float m_angle;
+        float m_previousAngle;
+        float m_angularAcceleration = 0;
 };

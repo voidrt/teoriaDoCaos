@@ -2,16 +2,38 @@
 #include "config.hpp"
 #include "entities/verlet_object.hpp"
 
-Camera2D camera = {0};
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
+
+
 Vector2 worldCentre = {kWindowWidth / 2, kWindowHeight / 2};
-auto ball = VerletObject(kInitialAngle);
-bool isPaused = true;
 
-float wrapAngle(float angle)
+struct Simulation
 {
-    float rem = angle / kTwoPi;
+    VerletObject pendulum;
+    int pulses;
+    float simulationSpeed;
+    float startingAngle;
+    float pendulumLength;
+    float K;
+    bool isPaused = true;
 
-    return angle - std::floor(rem) * kTwoPi;
+    Simulation() : pendulum(0.0f), pulses(0), simulationSpeed(1.0f), startingAngle(0.0f), pendulumLength(256.0f), K(0.9763f)
+    {
+    }
+
+    void Reset(float angle)
+    {
+        pendulum.Reset(angle);
+        isPaused = true;
+        pulses = 0;
+    }
+};
+
+float WrapAngle(float angle)
+{
+    float remainder = angle / kTwoPi;
+    return angle - std::floor(remainder) * kTwoPi;
 }
 
 void InitGameWindow()
@@ -19,80 +41,77 @@ void InitGameWindow()
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(kWindowWidth, kWindowHeight, "Rotor chutado");
     SetTargetFPS(60);
-
-    camera.target = worldCentre;
-    camera.offset = worldCentre;
-
-    camera.zoom = 1.0f;
 }
 
 
 int main()
 {
     InitGameWindow();
-    int pulses = 0;
-    float deltaPhysicsTime = 1.0f;
-    float wrappedAngle = wrapAngle(ball.GetAngle());
+    float deltaPhysicsTime = 0.8f;
+    Simulation simState;
+    float hardcodedAngle = simState.startingAngle;
 
     while (!WindowShouldClose())
     {
-        auto pauseText = "Simulacao Pausada";
 
-        if (IsKeyPressed(KEY_P)) isPaused = !isPaused;
+        if (IsKeyPressed(KEY_P)) simState.isPaused = !simState.isPaused;
 
-        if (!isPaused)
+        if (!simState.isPaused)
         {
-            pauseText = "Simulacao Rolando";
-
-            for (size_t i = 0; i < kSimulationSpeed; ++i)
+            for (size_t i = 0; i < static_cast<int>(simState.simulationSpeed); ++i)
             {
                 deltaPhysicsTime += kDeltaTime;
 
                 if (deltaPhysicsTime >= 1.0f)
                 {
-                    const float pulse = K * sin(ball.GetAngle());
-                    ball.AddAcceleration(-(pulse / kDeltaTime));
+                    const float pulse = simState.K * sin(simState.pendulum.GetAngle());
+                    simState.pendulum.AddAcceleration(-(pulse / kDeltaTime));
 
-                    pulses += kSimulationSpeed;
+                    simState.pulses += static_cast<int>(simState.simulationSpeed);
 
                     deltaPhysicsTime -= 1.0f;
                 }
 
-                ball.Move(kDeltaTime);
-                wrappedAngle = wrapAngle(ball.GetAngle());
+                simState.pendulum.Move(kDeltaTime);
             }
         }
 
 
         {
-            const Vector2 pendulum = {worldCentre.x + kPendulumLength * sin(wrappedAngle), worldCentre.y + kPendulumLength * cos(wrappedAngle)};
+            const float currentAngle = simState.pendulum.GetAngle();
+            const Vector2 pendulum = {worldCentre.x + simState.pendulumLength * sin(currentAngle), worldCentre.y + simState.pendulumLength * cos(currentAngle)};
 
             BeginDrawing();
             ClearBackground(BLACK);
 
-            DrawFPS(10,5);
-            DrawText(TextFormat(pauseText), 10, 40, 20, RAYWHITE);
-            DrawText(TextFormat("Chutes: %d", pulses), static_cast<int>(kWindowWidth / 2) - MeasureText("Chutes: %d", 1), 5, 20, RAYWHITE);
-            DrawText(TextFormat("Angulo (°): %.2f", (wrappedAngle * 180.0f) / M_PI),
-                static_cast<int>(kWindowWidth / 2) - MeasureText("Angulo (°: %d", 1), 45, 20, RAYWHITE);
-
-            BeginMode2D(camera);
-
-            DrawTriangle({worldCentre.x, worldCentre.y - 20}, {worldCentre.x - kWindowWidth / 6, kWindowHeight},
-                {worldCentre.x + kWindowWidth / 6, kWindowHeight}, LIGHTGRAY);
-            DrawTriangle({worldCentre.x, worldCentre.y + 20}, {(worldCentre.x - kWindowWidth / 6) + 20, kWindowHeight},
-                {(worldCentre.x + kWindowWidth / 6) - 20, kWindowHeight}, BLACK);
-            DrawLineDashed(worldCentre, {worldCentre.x, kWindowHeight}, kWindowHeight/120,10, LIGHTGRAY);
+            if (GuiButton((Rectangle){10, 45, 100, 40}, "Resetar"))
+            {
+                simState.Reset(0);
+            }
 
 
+            GuiSlider((Rectangle){ kWindowWidth- 250, 15, 200, 20 }, "Angulo inicial (rad)", TextFormat("%.2f", simState.startingAngle), &simState.startingAngle, 0,kTwoPi);
+            GuiSlider((Rectangle){ kWindowWidth- 250, 35, 200, 20 }, "Constante K", TextFormat("%.2f", simState.K), &simState.K, 0, 100);
+            GuiSlider((Rectangle){ kWindowWidth- 250, 55, 200, 20 }, "Comprimento do Pendulo", TextFormat("%.2f", simState.pendulumLength), &simState.pendulumLength, 0, 1000);
+            GuiSlider((Rectangle){ kWindowWidth- 250, 75, 200, 20 }, "Velocidade da Simulacao", TextFormat("%.0f", simState.simulationSpeed), &simState.simulationSpeed, 0, 20);
+
+
+            if (simState.startingAngle != hardcodedAngle)
+            {
+                hardcodedAngle = simState.startingAngle;
+                simState.Reset(simState.startingAngle);
+            }
+
+            DrawFPS(10, 5);
+            DrawText(TextFormat("Chutes: %d", simState.pulses), static_cast<int>(kWindowWidth / 2) - MeasureText("Chutes: %d", 1), 15, 20, RAYWHITE);
+
+            DrawLineDashed(worldCentre, {worldCentre.x, kWindowHeight}, static_cast<int>(kWindowHeight / 120), 10, LIGHTGRAY);
             DrawCircleV(worldCentre, 20, RAYWHITE);
-
 
             DrawLineEx(worldCentre, pendulum, 2, DARKGRAY);
             DrawCircleV(worldCentre, 10, RED);
             DrawCircleV(pendulum, 15, RED);
 
-            EndMode2D();
             EndDrawing();
         }
     }

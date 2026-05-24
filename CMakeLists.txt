@@ -12,12 +12,13 @@ FetchContent_Declare(
         URL https://github.com/raysan5/raylib/archive/refs/tags/6.0.tar.gz
 )
 
+
 set(SOURCES
         src/main.cpp
         src/entities/verlet_object.hpp
         src/entities/verlet_object.cpp
-	src/config.hpp
-
+		src/config.hpp
+		src/raygui.h
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
