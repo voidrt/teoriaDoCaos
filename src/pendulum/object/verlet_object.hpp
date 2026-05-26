@@ -1,5 +1,4 @@
 #pragma once
-#include <raymath.h>
 
 class VerletObject
 {
@@ -9,6 +8,7 @@ class VerletObject
         };
 
         [[nodiscard]] float GetAngle() const { return this->m_angle; }
+        [[nodiscard]] float GetVelocity(float dt) const { return (this->m_angle - this->m_previousAngle) / dt; };
         void AddAcceleration(float newAcceleration);
         void Move(float dt);
         void Reset(float initialAngle);

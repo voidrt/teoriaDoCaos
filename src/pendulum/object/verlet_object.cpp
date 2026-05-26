@@ -1,7 +1,5 @@
 #include "verlet_object.hpp"
 
-#include "../config.hpp"
-
 void VerletObject::AddAcceleration(const float newAcceleration)
 {
     this->m_angularAcceleration += newAcceleration;

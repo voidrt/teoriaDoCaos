@@ -1,0 +1,104 @@
+#include "pendulum_ui.hpp"
+
+void PendulumUI::ClearMiniMap() const
+{
+    BeginTextureMode(this->standardMap);
+    ClearBackground(BLACK);
+    EndTextureMode();
+}
+
+
+void PendulumUI::HandleInput() const
+{
+    if (IsKeyPressed(KEY_SPACE)) this->pendulumSim.isPaused = !this->pendulumSim.isPaused;
+    if (this->pendulumSim.pendulumStartingAngle != this->pendulumSim.hardcodedAngle)
+    {
+        this->pendulumSim.hardcodedAngle = this->pendulumSim.pendulumStartingAngle;
+        this->pendulumSim.Reset(this->pendulumSim.pendulumStartingAngle);
+    }
+    if (this->pendulumSim.K != this->pendulumSim.hardcodedK)
+    {
+        this->pendulumSim.hardcodedK = this->pendulumSim.K;
+        this->pendulumSim.Reset(this->pendulumSim.pendulumStartingAngle);
+        this->ClearMiniMap();
+    }
+}
+
+void PendulumUI::DrawSliders() const
+{
+    if (GuiButton((Rectangle){10, 45, 100, 40}, "Recomecar") || IsKeyPressed(KEY_R))
+    {
+        this->pendulumSim.Restart();
+    }
+    if (this->pendulumSim.isPaused)
+    {
+        GuiSlider((Rectangle){kWindowWidth - 250, 15, 200, 20}, "Angulo inicial (rad)", TextFormat("%.2f", this->pendulumSim.pendulumStartingAngle),
+            &this->pendulumSim.pendulumStartingAngle, 0, kTwoPi);
+        GuiSlider((Rectangle){kWindowWidth - 250, 35, 200, 20}, "Constante K", TextFormat("%.2f", this->pendulumSim.K), &this->pendulumSim.K, 0.1, 10);
+        GuiSlider((Rectangle){kWindowWidth - 250, 55, 200, 20}, "Comprimento do Pendulo", TextFormat("%.2f", this->pendulumSim.pendulumLength),
+            &this->pendulumSim.pendulumLength, 10, 1000);
+        GuiSlider((Rectangle){kWindowWidth - 250, 75, 200, 20}, "Velocidade da Simulacao", TextFormat("%.0f", this->pendulumSim.simulationSpeed),
+            &this->pendulumSim.simulationSpeed, 1, 100);
+    }
+}
+
+void PendulumUI::DrawPendulum() const
+{
+    const Vector2 pendulum = {
+        worldCentre.x + this->pendulumSim.pendulumLength * sinf(this->pendulumSim.pendulum.GetAngle()),
+        worldCentre.y + this->pendulumSim.pendulumLength * cosf(this->pendulumSim.pendulum.GetAngle())
+    };
+
+    DrawFPS(10, 5);
+    DrawText(TextFormat("Chutes: %d", this->pendulumSim.pulses), static_cast<int>(kWindowWidth / 2) - MeasureText("Chutes: %d", 1), 15, 20, RAYWHITE);
+
+    DrawLineDashed(worldCentre, {worldCentre.x, kWindowHeight}, static_cast<int>(kWindowHeight / 120), 10, LIGHTGRAY);
+    DrawCircleV(worldCentre, 20, RAYWHITE);
+
+    DrawLineEx(worldCentre, pendulum, 2, LIGHTGRAY);
+    DrawCircleV(worldCentre, 10, RED);
+    DrawCircleV(pendulum, 15, RED);
+}
+
+void PendulumUI::DrawMiniMap(const bool pulseApplied) const
+{
+    constexpr float miniMapWidth = kWindowWidth / 3.3f;
+    constexpr float miniMapHeight = kWindowHeight / 3.3f;
+
+    DrawRectangleLines(kWindowWidth - miniMapWidth - 20.0f, 20.0f, miniMapWidth, miniMapHeight, LIGHTGRAY);
+    DrawText("0", kWindowWidth - miniMapWidth - 30.0f, miniMapHeight + 20.0f, 12,RAYWHITE);
+    DrawText("P", kWindowWidth - 100 , miniMapHeight + 20.0f, 12,RAYWHITE);
+    DrawText("2pi", kWindowWidth - 20.0f - GuiGetTextWidth("2pi"), miniMapHeight + 20.0f, 12,RAYWHITE);
+    DrawText("Theta", kWindowWidth - miniMapWidth - 30.0f - GuiGetTextWidth("Theta"), (miniMapHeight / 2) + 20.0f, 12,RAYWHITE);
+    DrawText("2pi", kWindowWidth - miniMapWidth - 30.0f - GuiGetTextWidth("2pi"), 20.0f, 12,RAYWHITE);
+
+    if (pulseApplied)
+    {
+        const float velocity = Utils::Mod2PI(this->pendulumSim.pendulum.GetVelocity(kDeltaTime));
+        const float angle = Utils::Mod2PI(this->pendulumSim.pendulum.GetAngle());
+
+        const float normalizedX = velocity / kTwoPi, normalizedY = angle / kTwoPi;
+        const float mapPointX = normalizedX * (kWindowWidth / 3.3f), mapPointY = (1.0f - normalizedY) * (kWindowHeight / 3.3f);
+
+        BeginTextureMode(this->standardMap);
+        DrawRectangle(mapPointX, mapPointY, 2, 2, RAYWHITE);
+        EndTextureMode();
+    }
+    const Rectangle miniMap = {
+        0.0f, 0.0f, static_cast<float>(this->standardMap.texture.width), static_cast<float>(-this->standardMap.texture.height)
+    };
+
+    DrawTextureRec(this->standardMap.texture, miniMap, {kWindowWidth - miniMapWidth - 20.0f, 20.0f}, WHITE);
+}
+
+void PendulumUI::RunSimulation() const
+{
+    if (!this->pendulumSim.isPaused)
+    {
+        for (size_t i = 0; i < static_cast<int>(this->pendulumSim.simulationSpeed); ++i)
+        {
+            const bool kicked = this->pendulumSim.Run();
+            this->DrawMiniMap(kicked);
+        }
+    }
+}

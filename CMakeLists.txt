@@ -15,10 +15,14 @@ FetchContent_Declare(
 
 set(SOURCES
         src/main.cpp
-        src/entities/verlet_object.hpp
-        src/entities/verlet_object.cpp
-		src/config.hpp
-		src/raygui.h
+        src/constants.hpp
+		src/utils.hpp
+		src/pendulum/object/verlet_object.hpp
+		src/pendulum/object/verlet_object.cpp
+		src/pendulum/simulation/pendulum_simulation.hpp
+		src/pendulum/simulation/pendulum_simulation.cpp
+		src/pendulum/ui/pendulum_ui.hpp
+		src/pendulum/ui/pendulum_ui.cpp
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
