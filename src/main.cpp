@@ -2,7 +2,7 @@
 #include "pendulum/simulation/pendulum_simulation.hpp"
 #include "pendulum/ui/pendulum_ui.hpp"
 #define RAYGUI_IMPLEMENTATION
-#include "raygui.h"
+#include "../include/raygui.h"
 
 enum SimMode
 {

@@ -32,12 +32,12 @@ void PendulumUI::DrawSliders() const
     }
     if (this->pendulumSim.isPaused)
     {
-        GuiSlider((Rectangle){kWindowWidth - 250, 15, 200, 20}, "Angulo inicial (rad)", TextFormat("%.2f", this->pendulumSim.pendulumStartingAngle),
+        GuiSlider((Rectangle){kWindowWidth - 450, 15, 300, 40}, "Angulo inicial (rad)", TextFormat("%.2f", this->pendulumSim.pendulumStartingAngle),
             &this->pendulumSim.pendulumStartingAngle, 0, kTwoPi);
-        GuiSlider((Rectangle){kWindowWidth - 250, 35, 200, 20}, "Constante K", TextFormat("%.2f", this->pendulumSim.K), &this->pendulumSim.K, 0.1, 10);
-        GuiSlider((Rectangle){kWindowWidth - 250, 55, 200, 20}, "Comprimento do Pendulo", TextFormat("%.2f", this->pendulumSim.pendulumLength),
+        GuiSlider((Rectangle){kWindowWidth - 450, 75, 300, 40}, "Constante K", TextFormat("%.2f", this->pendulumSim.K), &this->pendulumSim.K, 0.1, 10);
+        GuiSlider((Rectangle){kWindowWidth - 450, 135, 300, 40}, "Comprimento do Pendulo", TextFormat("%.2f", this->pendulumSim.pendulumLength),
             &this->pendulumSim.pendulumLength, 10, 1000);
-        GuiSlider((Rectangle){kWindowWidth - 250, 75, 200, 20}, "Velocidade da Simulacao", TextFormat("%.0f", this->pendulumSim.simulationSpeed),
+        GuiSlider((Rectangle){kWindowWidth - 450, 195, 300, 40}, "Velocidade da Simulacao", TextFormat("%.0f", this->pendulumSim.simulationSpeed),
             &this->pendulumSim.simulationSpeed, 1, 100);
     }
 }
@@ -52,7 +52,7 @@ void PendulumUI::DrawPendulum() const
     DrawFPS(10, 5);
     DrawText(TextFormat("Chutes: %d", this->pendulumSim.pulses), static_cast<int>(kWindowWidth / 2) - MeasureText("Chutes: %d", 1), 15, 20, RAYWHITE);
 
-    DrawLineDashed(worldCentre, {worldCentre.x, kWindowHeight}, static_cast<int>(kWindowHeight / 120), 10, LIGHTGRAY);
+    DrawLineEx(worldCentre, {worldCentre.x, kWindowHeight},  1, LIGHTGRAY);
     DrawCircleV(worldCentre, 20, RAYWHITE);
 
     DrawLineEx(worldCentre, pendulum, 2, LIGHTGRAY);
