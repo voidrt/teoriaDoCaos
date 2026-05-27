@@ -65,9 +65,9 @@ void PendulumUI::DrawMiniMap(const bool pulseApplied) const
 
     DrawRectangleLines(kWindowWidth - kMiniMapWidth - 25.0f, 15.0f, kMiniMapWidth+10.0f, kMiniMapHeight+10.0f, LIGHTGRAY);
     DrawText("0", kWindowWidth - kMiniMapWidth - 35.0f, kMiniMapHeight + 25.0f, 12,RAYWHITE);
-    DrawText("P", kWindowWidth - (kMiniMapWidth/2.0f)  - GuiGetTextWidth("P"), kMiniMapHeight + 25.0f, 12,RAYWHITE);
+    DrawText("Theta", kWindowWidth - (kMiniMapWidth/2.0f)  - GuiGetTextWidth("Theta"), kMiniMapHeight + 25.0f, 12,RAYWHITE);
     DrawText("2pi", kWindowWidth - 25.0f - GuiGetTextWidth("2pi"), kMiniMapHeight + 25.0f, 12,RAYWHITE);
-    DrawText("Theta", kWindowWidth - kMiniMapWidth - 35.0f - GuiGetTextWidth("Theta"), (kMiniMapHeight / 2) + 25.0f, 12,RAYWHITE);
+    DrawText("P", kWindowWidth - kMiniMapWidth - 35.0f - GuiGetTextWidth("P"), (kMiniMapHeight / 2) + 25.0f, 12,RAYWHITE);
     DrawText("2pi", kWindowWidth - kMiniMapWidth - 35.0f - GuiGetTextWidth("2pi"), 25.0f, 12,RAYWHITE);
 
     if (pulseApplied)
@@ -75,11 +75,11 @@ void PendulumUI::DrawMiniMap(const bool pulseApplied) const
         const float velocity = Utils::Mod2PI(this->pendulumSim.pendulum.GetVelocity(kDeltaTime));
         const float angle = Utils::Mod2PI(this->pendulumSim.pendulum.GetAngle());
 
-        const float normalizedX = velocity / kTwoPi, normalizedY = angle / kTwoPi;
+        const float normalizedX = angle / kTwoPi, normalizedY = velocity / kTwoPi;
         const float mapPointX = normalizedX * kMiniMapWidth, mapPointY = (1.0f - normalizedY) * (kMiniMapHeight);
 
         BeginTextureMode(this->standardMap);
-        DrawRectangle(mapPointX, mapPointY, 2, 2, RAYWHITE);
+        DrawPixel(mapPointX, mapPointY, RAYWHITE);
         EndTextureMode();
     }
     const Rectangle miniMap = {

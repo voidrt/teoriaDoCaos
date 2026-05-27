@@ -2,14 +2,14 @@
 #include "../simulation/pendulum_simulation.hpp"
 #include "raylib.h"
 #include "../../utils.hpp"
-#include "../../../../include/raygui.h"
+#include "../include/raygui.h"
 #include <cmath>
 
 class PendulumUI
 {
     private:
         PendulumSimulation& pendulumSim;
-        Vector2 worldCentre = {(kWindowWidth / 2) - 200, kWindowHeight / 2};
+        Vector2 worldCentre = {(kWindowWidth / 2) - 250, kWindowHeight / 2};
         RenderTexture2D standardMap;
 
     public:
