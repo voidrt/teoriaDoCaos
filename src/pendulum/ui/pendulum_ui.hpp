@@ -2,7 +2,7 @@
 #include "../simulation/pendulum_simulation.hpp"
 #include "raylib.h"
 #include "../../utils.hpp"
-#include "raygui.h"
+#include "../../../../include/raygui.h"
 #include <cmath>
 
 class PendulumUI
