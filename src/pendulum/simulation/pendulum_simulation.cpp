@@ -14,7 +14,7 @@ void PendulumSimulation::Restart()
     this->simulationSpeed = 1.0f;
     this->pendulumStartingAngle = 0.0f;
     this->hardcodedAngle = 0.0f;
-    this->pendulumLength = 256.0f;
+    this->pendulumLength = 442.0f;
     this->K = 0.971635f;
 }
 

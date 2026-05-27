@@ -12,7 +12,6 @@ FetchContent_Declare(
         URL https://github.com/raysan5/raylib/archive/refs/tags/6.0.tar.gz
 )
 
-
 set(SOURCES
         src/main.cpp
         src/constants.hpp
@@ -26,6 +25,6 @@ set(SOURCES
 )
 
 add_executable(${PROJECT_NAME} ${SOURCES})
-target_include_directories(${PROJECT_NAME} PRIVATE include)
-
+target_include_directories(${PROJECT_NAME} PRIVATE include )
 target_link_libraries(${PROJECT_NAME} PRIVATE raylib)
+

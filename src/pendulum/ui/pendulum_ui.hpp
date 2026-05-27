@@ -9,11 +9,13 @@ class PendulumUI
 {
     private:
         PendulumSimulation& pendulumSim;
-        Vector2 worldCentre = {kWindowWidth / 2, kWindowHeight / 2};
+        Vector2 worldCentre = {(kWindowWidth / 2) - 200, kWindowHeight / 2};
         RenderTexture2D standardMap;
 
     public:
-        explicit PendulumUI(PendulumSimulation& simulation) : pendulumSim(simulation), standardMap(LoadRenderTexture(kWindowWidth, kWindowHeight))
+        explicit PendulumUI(PendulumSimulation& simulation) : pendulumSim(simulation),
+                                                              standardMap(
+                                                                  LoadRenderTexture(static_cast<int>(kMiniMapWidth), static_cast<int>(kMiniMapHeight)))
         {
             BeginTextureMode(standardMap);
             ClearBackground(BLACK);

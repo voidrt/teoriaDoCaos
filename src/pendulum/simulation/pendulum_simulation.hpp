@@ -2,7 +2,6 @@
 
 #include "../object/verlet_object.hpp"
 #include "../../constants.hpp"
-#include "../../utils.hpp"
 #include "cmath"
 
 struct PendulumSimulation
@@ -22,7 +21,7 @@ struct PendulumSimulation
         bool isPaused = true;
 
         explicit PendulumSimulation() : pendulum(0.0f),  pulses(0), simulationSpeed(1.0f), pendulumStartingAngle(0.0f), hardcodedAngle(0.0f),hardcodedK(0.971635f),
-                                        pendulumLength(256.0f),
+                                        pendulumLength(442.0f),
                                         K(0.971635f)
         {
         }

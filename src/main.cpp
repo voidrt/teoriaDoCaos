@@ -1,6 +1,7 @@
 #include <raylib.h>
 #include "pendulum/simulation/pendulum_simulation.hpp"
 #include "pendulum/ui/pendulum_ui.hpp"
+#include "utils.hpp"
 #define RAYGUI_IMPLEMENTATION
 #include "../include/raygui.h"
 
@@ -21,13 +22,14 @@ int main()
 {
     InitGameWindow();
     PendulumSimulation simulation;
-    auto simulationUI = PendulumUI(simulation);
+    const auto simulationUI = PendulumUI(simulation);
     SimMode mode = PENDULUM_SIMULATION;
 
     while (!WindowShouldClose())
     {
         if (IsKeyPressed(KEY_M)) mode = PHASE_MAP;
         if (IsKeyPressed(KEY_S)) mode = PENDULUM_SIMULATION;
+        Utils::FullscreenHelper();
 
         switch (mode)
         {

@@ -52,25 +52,23 @@ void PendulumUI::DrawPendulum() const
     DrawFPS(10, 5);
     DrawText(TextFormat("Chutes: %d", this->pendulumSim.pulses), static_cast<int>(kWindowWidth / 2) - MeasureText("Chutes: %d", 1), 15, 20, RAYWHITE);
 
-    DrawLineEx(worldCentre, {worldCentre.x, kWindowHeight},  1, LIGHTGRAY);
-    DrawCircleV(worldCentre, 20, RAYWHITE);
+    DrawLineEx(worldCentre, {worldCentre.x, kWindowHeight}, 1, LIGHTGRAY);
+    DrawCircleV(worldCentre, 40, RAYWHITE);
 
-    DrawLineEx(worldCentre, pendulum, 2, LIGHTGRAY);
-    DrawCircleV(worldCentre, 10, RED);
-    DrawCircleV(pendulum, 15, RED);
+    DrawLineEx(worldCentre, pendulum, 5, LIGHTGRAY);
+    DrawCircleV(worldCentre, 20, RED);
+    DrawCircleV(pendulum, 25, RED);
 }
 
 void PendulumUI::DrawMiniMap(const bool pulseApplied) const
 {
-    constexpr float miniMapWidth = kWindowWidth / 3.3f;
-    constexpr float miniMapHeight = kWindowHeight / 3.3f;
 
-    DrawRectangleLines(kWindowWidth - miniMapWidth - 20.0f, 20.0f, miniMapWidth, miniMapHeight, LIGHTGRAY);
-    DrawText("0", kWindowWidth - miniMapWidth - 30.0f, miniMapHeight + 20.0f, 12,RAYWHITE);
-    DrawText("P", kWindowWidth - 100 , miniMapHeight + 20.0f, 12,RAYWHITE);
-    DrawText("2pi", kWindowWidth - 20.0f - GuiGetTextWidth("2pi"), miniMapHeight + 20.0f, 12,RAYWHITE);
-    DrawText("Theta", kWindowWidth - miniMapWidth - 30.0f - GuiGetTextWidth("Theta"), (miniMapHeight / 2) + 20.0f, 12,RAYWHITE);
-    DrawText("2pi", kWindowWidth - miniMapWidth - 30.0f - GuiGetTextWidth("2pi"), 20.0f, 12,RAYWHITE);
+    DrawRectangleLines(kWindowWidth - kMiniMapWidth - 25.0f, 15.0f, kMiniMapWidth+10.0f, kMiniMapHeight+10.0f, LIGHTGRAY);
+    DrawText("0", kWindowWidth - kMiniMapWidth - 35.0f, kMiniMapHeight + 25.0f, 12,RAYWHITE);
+    DrawText("P", kWindowWidth - (kMiniMapWidth/2.0f)  - GuiGetTextWidth("P"), kMiniMapHeight + 25.0f, 12,RAYWHITE);
+    DrawText("2pi", kWindowWidth - 25.0f - GuiGetTextWidth("2pi"), kMiniMapHeight + 25.0f, 12,RAYWHITE);
+    DrawText("Theta", kWindowWidth - kMiniMapWidth - 35.0f - GuiGetTextWidth("Theta"), (kMiniMapHeight / 2) + 25.0f, 12,RAYWHITE);
+    DrawText("2pi", kWindowWidth - kMiniMapWidth - 35.0f - GuiGetTextWidth("2pi"), 25.0f, 12,RAYWHITE);
 
     if (pulseApplied)
     {
@@ -78,7 +76,7 @@ void PendulumUI::DrawMiniMap(const bool pulseApplied) const
         const float angle = Utils::Mod2PI(this->pendulumSim.pendulum.GetAngle());
 
         const float normalizedX = velocity / kTwoPi, normalizedY = angle / kTwoPi;
-        const float mapPointX = normalizedX * (kWindowWidth / 3.3f), mapPointY = (1.0f - normalizedY) * (kWindowHeight / 3.3f);
+        const float mapPointX = normalizedX * kMiniMapWidth, mapPointY = (1.0f - normalizedY) * (kMiniMapHeight);
 
         BeginTextureMode(this->standardMap);
         DrawRectangle(mapPointX, mapPointY, 2, 2, RAYWHITE);
@@ -88,7 +86,7 @@ void PendulumUI::DrawMiniMap(const bool pulseApplied) const
         0.0f, 0.0f, static_cast<float>(this->standardMap.texture.width), static_cast<float>(-this->standardMap.texture.height)
     };
 
-    DrawTextureRec(this->standardMap.texture, miniMap, {kWindowWidth - miniMapWidth - 20.0f, 20.0f}, WHITE);
+    DrawTextureRec(this->standardMap.texture, miniMap, {kWindowWidth - kMiniMapWidth - 20.0f, 20.0f}, RAYWHITE);
 }
 
 void PendulumUI::RunSimulation() const
